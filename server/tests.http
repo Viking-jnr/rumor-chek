@@ -1,0 +1,29 @@
+### Real claim
+POST http://localhost:5000/api/claims
+Content-Type: application/json
+
+{
+  "claimText": "cholera outbreak reported in Turkana county",
+  "category": "health",
+  "location": "Turkana"
+}
+
+### Claim with no matches
+POST http://localhost:5000/api/claims
+Content-Type: application/json
+
+{
+  "claimText": "purple rain fell across machakos yesterday",
+  "category": "weather",
+  "location": "Machakos"
+}
+
+### Impossible claim
+POST http://localhost:5000/api/claims
+Content-Type: application/json
+
+{
+  "claimText": "flying pigs were spotted in Nairobi yesterday",
+  "category": "news",
+  "location": "Nairobi"
+}
