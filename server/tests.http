@@ -27,3 +27,13 @@ Content-Type: application/json
   "category": "news",
   "location": "Nairobi"
 }
+
+### Verdict Test
+POST http://localhost:5000/api/claims
+Content-Type: application/json
+
+{
+  "claimText": "maize prices have doubled in Machakos market this week",
+  "category": "food_security",
+  "location": "Machakos"
+}

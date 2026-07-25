@@ -3,7 +3,7 @@ const { tavily } = require('@tavily/core');
 
 const client = tavily({ apiKey: process.env.TAVILY_API });
 
-const RELEVANCE_THRESHOLD = 0.5
+const RELEVANCE_THRESHOLD = 0.4
 
 const trusted_domains = [
     'who.int', 
@@ -14,6 +14,10 @@ const trusted_domains = [
     'meteo.go.ke',
     'ndoc.go.ke',
     'ndma.go.ke',
+    'kemri.go.ke',
+    'health.go.ke',
+    'disastermanagement.go.ke',
+    'specialprogrammes.go.ke'
 ]
 
 async function searchTrustedSources(claimText){
@@ -21,6 +25,7 @@ async function searchTrustedSources(claimText){
         const response = await client.search(claimText, {
             includeDomains: trusted_domains,
             maxResults: 5,
+            timeRange: 'year',
         });
         const relevant = response.results.filter(r => r.score >= RELEVANCE_THRESHOLD);
         return relevant;

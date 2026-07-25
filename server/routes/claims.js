@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { searchTrustedSources } = require('../services/tavily');
+const { getVerdict } = require('../services/llm')
 
 
 router.post('/', async (req, res) => {
@@ -37,7 +38,7 @@ router.post('/', async (req, res) => {
                 message: 'No relevant sources were found in the trusted domains for this claim.'
             });
         }
-        
+
         // Cache each result tied to this claim to the database
         const insertedSources = [];
         for (const t of trustedResults){
@@ -46,10 +47,35 @@ router.post('/', async (req, res) => {
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true) RETURNING id`,
                 [t.title, t.url, (t.content || '').slice(0, 500), category, location, claimId, claimText, t.score ]
             );
-            insertedSources.push({ id: sourceResult.rows[0].id, title: t.title, url: t.url, score: t.score });
+            insertedSources.push({ id: sourceResult.rows[0].id, title: t.title, url: t.url, content: t.content, score: t.score });
         }
+
+        // Call getVerdict to return the verdict of the claim after being processed by the LLM
+        let verdictResult
+        try{
+            verdictResult = await getVerdict(claimText, insertedSources);
+        }catch(err){
+            console.error('Verdict generation failed:', err);
+            verdictResult = {
+                verdict: 'unverified',
+                confidence: 0,
+                reasoning: 'Verdict generation failed. Treat as unverified pending manual review.',
+                cited_source_ids: [],
+            }
+        }
+        await pool.query(
+            `INSERT into verdicts (claim_id, verdict, confidence, reasoning, cited_sources)
+            VALUES ($1, $2, $3, $4, $5)`,
+            [claimId, verdictResult.verdict, verdictResult.confidence, verdictResult.reasoning, JSON.stringify(verdictResult.cited_sources)]
+        );
+
+
         res.status(201).json({
             claimId: claimId,
+            verdict: verdictResult.verdict,
+            confidence: verdictResult.confidence,
+            reasoning: verdictResult.reasoning,
+            cited_sources: verdictResult.cited_sources,
             sourcesFound: insertedSources.length,
             sources: insertedSources
         });
