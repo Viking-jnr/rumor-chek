@@ -1,4 +1,5 @@
 const GROQ_URL= 'https://api.groq.com/openai/v1/chat/completions';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
 
 const SYSTEM_PROMPT = `You are a fact-verification assistant for early warning and disaster response.
 You will be given a claim and a list of sources retrieved from trusted institutional domains (WHO, ReliefWeb, FEWS NET, ICPAC, Red Cross Kenya, Kenya Meteorological Department, NDOC, NDMA).
@@ -40,7 +41,7 @@ async function getVerdict(claimText, sources) {
     });
     if (!response.ok) {
         const err_text = await response.text();
-        throw new Error(`Groq API error (${response.status}): ${response.err_text}`);
+        throw new Error(`Groq API error (${response.status}): ${err_text}`);
     }
     const data = await response.json();
     return JSON.parse(data.choices[0].message.content);

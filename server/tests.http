@@ -37,3 +37,17 @@ Content-Type: application/json
   "category": "food_security",
   "location": "Machakos"
 }
+
+### Preview a bulletin
+POST http://localhost:5000/api/bulletins/preview
+Content-Type: application/json
+
+{
+  "original_text": "A cholera risk alert has been issued for Turkana County following contaminated water reports. Residents are advised to boil drinking water and seek treatment immediately if symptoms occur.",
+  "ward": "Turkana Central",
+  "language": "sw"
+}
+
+### Send it (use the bulletin_id returned above)
+POST http://localhost:5000/api/bulletins/12/send
+Content-Type: application/json

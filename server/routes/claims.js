@@ -33,8 +33,9 @@ router.post('/', async (req, res) => {
             );
             return res.status(200).json({
                 claimId: claimId,
+                confidence: 0,
                 verdict: 'Insufficient Data',
-                sourcesFound: 0,
+                cited_sources: 0,
                 message: 'No relevant sources were found in the trusted domains for this claim.'
             });
         }
