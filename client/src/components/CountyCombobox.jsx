@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { KENYA_COUNTIES } from "./counties";
+import { KENYA_COUNTIES } from "./Counties";
 
 export function CountySelectCombobox({ value, onChange }) {
   const [open, setOpen] = React.useState(false);
