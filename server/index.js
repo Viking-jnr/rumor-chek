@@ -18,6 +18,9 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/claims', claimsRouter);
 app.use('/api/bulletins', requireAccessCode, bulletinsRouter);
+app.post('/api/verify-access-code', requireAccessCode, (req, res) => {
+  res.json({ valid: true });
+});
 // Set the port
 const PORT = process.env.PORT || 5000;
 // Start the server

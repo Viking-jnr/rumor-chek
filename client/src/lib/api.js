@@ -37,3 +37,17 @@ export async function sendBulletin(bulletinId, accessCode) {
     if (!response.ok) throw new Error('Failed to send bulletin');
     return response.json();
 }
+
+export async function getRecentClaims() {
+  const response = await fetch(`${API_BASE}/api/claims/recent`);
+  if (!response.ok) throw new Error('Failed to load recent claims');
+  return response.json();
+}
+
+export async function verifyAccessCode(code) {
+  const response = await fetch(`${API_BASE}/api/verify-access-code`, {
+    method: 'POST',
+    headers: { 'x-access-code': code },
+  });
+  return response.ok;
+}

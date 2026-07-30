@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { previewBulletin, sendBulletin } from '@/lib/api';
+import { CountySelectCombobox } from "./CountyCombobox";
 
 const WARDS = ['Nairobi','Turkana Central', 'Kajiado Town'];
 
 export default function BulletinForm({ accessCode, onUnauthorized}) {
     const [originalText, setOriginalText] = useState('');
-    const [ward, setWard] = useState(WARDS[0]);
+    const [county, setCounty] = useState('');
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -47,27 +48,24 @@ export default function BulletinForm({ accessCode, onUnauthorized}) {
 
     return(
         <div className="space-y-4">
-            <form onSubmit={handlePreview} className="space-y-4">
+            <form onSubmit={handlePreview} className="space-y-4 ">
                 <Textarea
                 placeholder="Write the official bulletin text here..."
                 value={originalText}
                 onChange={(e) => setOriginalText(e.target.value)}
                 rows={5}
                 />
-                <Select value={ward} onValueChange= {setWard}>
-                    <SelectTrigger className="w-56">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {WARDS.map((w) => (
-                            <SelectItem key={w} value={w}>{w}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                {error && <p className="text-sm text-red-600">{error}</p>}
+                <div>
+                    <CountySelectCombobox
+                        value={county}
+                        onChange={(val) => setCounty(val)}
+                    />
+                    {error && <p className="text-sm text-red-600">{error}</p>}
+                </div>
                 <Button type="submit" disabled={loading}>
                     {loading ? 'Generating...': 'Preview simplified bulletin'}
                 </Button>
+                
             </form>
 
             {preview && (

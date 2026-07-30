@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import ClaimForm  from '@/components/ClaimForm';
-import VerdictResult from './components/VerdictResult';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import AccessGate from '@/components/AccessGate';
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
+import AppSidebar from '@/components/AppSidebar';
+import ClaimForm from '@/components/ClaimForm';
+import VerdictResult from '@/components/VerdictResult';
 import BulletinForm from '@/components/BulletinForm';
+import AccessGate from '@/components/AccessGate';
+import NewsFeed from './components/NewsFeed';
+import SettingsPage from './components/SettingsPage';
 
-function App() {
+
+export default function App() {
+  const [activePage, setActivePage] = useState('home');
   const [result, setResult] = useState(null);
   const [accessCode, setAccessCode] = useState(() => sessionStorage.getItem('accessCode') || '');
   const [unlocked, setUnlocked] = useState(!!sessionStorage.getItem('accessCode'));
@@ -17,31 +22,33 @@ function App() {
   }
 
   return (
-    <div className='max-w-xl mx-auto py-12 px-4 space-y-6' style={{ textAlign: 'center'}}>
-      <h1 className='text-2xl font-bold'>Rumor Check</h1>
+    <SidebarProvider>
+      <AppSidebar activePage={activePage} onNavigate={setActivePage} />
+      <SidebarInset>
+        <header className="flex items-center gap-2 border-b px-4 py-3">
+          <SidebarTrigger />
+          <span className="font-medium capitalize">{activePage === 'home' ? 'Check a claim' : activePage}</span>
+        </header>
 
-      <Tabs defaultValue="rumor-check">
-        <TabsList>
-          <TabsTrigger value="rumor-check">Check a Claim</TabsTrigger>
-          <TabsTrigger value="authority">Authority Dashboard</TabsTrigger>
-        </TabsList>
+        <main className="max-w-xl  w-full py-10 px-4  space-y-6">
+          {activePage === 'home' && (
+            <>
+              <p className="text-gray-600">Heard something? Check if it's true before you share it.</p>
+              <ClaimForm onResult={setResult} />
+              {result && <VerdictResult result={result} />}
+            </>
+          )}
 
-        <TabsContent value="rumor-check" className="space-y-6 pt-4">
-           <p className='text-gray-600'>Heard Something? Check if it's true before you share it</p>
-          <ClaimForm onResult = {setResult} />
-          {result && <VerdictResult result={result} />}
-        </TabsContent>
+          {activePage === 'authority' && (
+            unlocked
+              ? <BulletinForm accessCode={accessCode} onUnauthorized={() => { setUnlocked(false); sessionStorage.removeItem('accessCode'); }} />
+              : <AccessGate onUnlock={handleUnlock} />
+          )}
 
-        <TabsContent value="authority" className="pt-4">
-          {unlocked
-            ? <BulletinForm accessCode={accessCode} onUnauthorized = {() => {setUnlocked(false); sessionStorage.removeItem('accessCode');}} />
-            : <AccessGate onUnlock={handleUnlock} />
-          }
-        </TabsContent>
-      </Tabs>
-     
-    </div>
-  )
+          {activePage === 'news' && <NewsFeed />}
+          {activePage === 'settings' && <SettingsPage />}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
-
-export default App

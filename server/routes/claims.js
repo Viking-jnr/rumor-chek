@@ -86,4 +86,21 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/recent', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      select c.id, c.claim_text, c.category, c.location, c.submitted_at,
+             v.verdict, v.confidence, v.reasoning
+      from claims c
+      left join verdicts v on v.claim_id = c.id
+      order by c.submitted_at desc
+      limit 20
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch recent claims' });
+  }
+});
+
 module.exports = router;
