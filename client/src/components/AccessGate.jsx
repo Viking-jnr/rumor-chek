@@ -31,9 +31,10 @@ export default function AccessGate({ onUnlock }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 max-w-xs">
       <p className="text-sm text-gray-600">Enter the official access code to continue.</p>
+      <p className='text-sm text-gray-300'>Will add Accounts and Authentication for Officials later</p>
       <Input
         type="password"
-        placeholder="Access code"
+        placeholder="For testing, the accesscode is 'gatepass101'"
         value={code}
         onChange={(e) => setCode(e.target.value)}
       />

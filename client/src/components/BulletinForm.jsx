@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { previewBulletin, sendBulletin } from '@/lib/api';
 import { CountySelectCombobox } from "./CountyCombobox";
+import { KENYA_COUNTIES } from "./Counties";
 
-const WARDS = ['Nairobi','Turkana Central', 'Kajiado Town'];
 
 export default function BulletinForm({ accessCode, onUnauthorized}) {
     const [originalText, setOriginalText] = useState('');
-    const [county, setCounty] = useState('');
+    const [ward, setWard] = useState('');
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -57,8 +57,8 @@ export default function BulletinForm({ accessCode, onUnauthorized}) {
                 />
                 <div>
                     <CountySelectCombobox
-                        value={county}
-                        onChange={(val) => setCounty(val)}
+                        value={ward}
+                        onChange={(val) => setWard(val)}
                     />
                     {error && <p className="text-sm text-red-600">{error}</p>}
                 </div>
@@ -71,7 +71,7 @@ export default function BulletinForm({ accessCode, onUnauthorized}) {
             {preview && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">Preview (Kiswahili)</CardTitle>
+                        <CardTitle className="text-base">Preview </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="italic">{preview.simplified_text}</p>
